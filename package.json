@@ -1,21 +1,24 @@
 {
   "name": "mecab-ya-wrapper-ko",
-  "version": "1.0.0",
-  "description": "Node.js용 한국어 MeCab 형태소분석기 래퍼. 사전을 모듈 내부에 포함하여 네트워크 없이 바로 사용.",
-  "main": "src/index.js",
+  "version": "0.1.1",
+  "description": "Yet another mecab wrapper for nodejs",
+  "main": "mecab.js",
   "scripts": {
-    "test": "node ./test/mecab.test.js"
+    "test": "grunt"
   },
-  "files": [
-    "src/",
-    "libc/mecab/bin/*",
-    "libc/mecab/lib/*",
-    "libc/mecab/dic/ko-dic/**"
+  "keywords": [
+    "mecab",
+    "nlp"
   ],
-  "keywords": ["mecab", "nodejs", "형태소", "ko-dic", "nlp", "korean"],
-  "author": "작성자 이름",
+  "author": "Dae Kason",
   "license": "MIT",
-  "engines": {
-    "node": ">=14"
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-nodeunit": "^1.0.0",
+    "nodeunit": "^0.9.1"
+  },
+  "dependencies": {
+    "shell-quote": "^1.5.0"
   }
 }
