@@ -1,6 +1,6 @@
 {
   "name": "mecab-ya-wrapper-ko",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Node.js용 MeCab-KO 형태소 분석기 래퍼. npm install 한 번으로 MeCab 바이너리 자동 설치.",
   "main": "mecab.js",
   "scripts": {
