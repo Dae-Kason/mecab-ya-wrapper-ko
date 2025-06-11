@@ -7,22 +7,22 @@ var mecabRoot = path.dirname(require.resolve('./package.json'));
 var MECAB_LIB_PATH =
   process.env.MECAB_LIB_PATH || path.join(mecabRoot, 'mecab');
 
+var DEFAULT_SYS_DIC_PATH = null;
 var DEFAULT_USER_DIC_PATH = null;
 
-var buildCommand = function (text, userDicPath) {
+var buildCommand = function (text, sysDicPath, userDicPath) {
   var quotedText = sq.quote(['echo', text]);
   var mecabBin = MECAB_LIB_PATH + '/bin/mecab';
   var sysDic = MECAB_LIB_PATH + '/lib/mecab/dic/mecab-ko-dic';
 
   var cmd =
-    'LD_LIBRARY_PATH=' +
-    MECAB_LIB_PATH +
-    ' ' +
-    quotedText +
-    ' | ' +
-    mecabBin +
-    ' -d ' +
-    sysDic;
+    'LD_LIBRARY_PATH=' + MECAB_LIB_PATH + ' ' + quotedText + ' | ' + mecabBin;
+
+  if (sysDicPath && fs.existsSync(sysDicPath)) {
+    cmd += ' -d ' + sysDicPath;
+  } else {
+    cmd += ' -d ' + sysDic;
+  }
 
   if (userDicPath && fs.existsSync(userDicPath)) {
     cmd += ' -u ' + userDicPath;
@@ -31,8 +31,8 @@ var buildCommand = function (text, userDicPath) {
   return cmd;
 };
 
-var execMecab = function (text, userDicPath, callback) {
-  var command = buildCommand(text, userDicPath || DEFAULT_USER_DIC_PATH);
+var execMecab = function (text, callback) {
+  var command = buildCommand(text, DEFAULT_SYS_DIC_PATH, DEFAULT_USER_DIC_PATH);
 
   cp.exec(command, function (err, result) {
     if (err) {
@@ -62,8 +62,8 @@ var parseFunctions = {
   }
 };
 
-var parse = function (text, method, userDicPath, callback) {
-  execMecab(text, userDicPath, function (err, result) {
+var parse = function (text, method, callback) {
+  execMecab(text, function (err, result) {
     if (err) {
       return callback(err);
     }
@@ -84,16 +84,22 @@ var parse = function (text, method, userDicPath, callback) {
   });
 };
 
-var pos = function (text, callback, userDicPath) {
-  parse(text, 'pos', userDicPath, callback);
+var pos = function (text, callback) {
+  parse(text, 'pos', callback);
 };
 
-var morphs = function (text, callback, userDicPath) {
-  parse(text, 'morphs', userDicPath, callback);
+var morphs = function (text, callback) {
+  parse(text, 'morphs', callback);
 };
 
-var nouns = function (text, callback, userDicPath) {
-  parse(text, 'nouns', userDicPath, callback);
+var nouns = function (text, callback) {
+  parse(text, 'nouns', callback);
+};
+
+var setDefaultSysDic = function (path) {
+  if (fs.existsSync(path)) {
+    DEFAULT_SYS_DIC_PATH = path;
+  }
 };
 
 var setDefaultUserDic = function (path) {
@@ -106,5 +112,6 @@ module.exports = {
   pos: pos,
   morphs: morphs,
   nouns: nouns,
+  setDefaultSysDic: setDefaultSysDic,
   setDefaultUserDic: setDefaultUserDic
 };
